@@ -3,12 +3,16 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import numberService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [success, setSuccess] = useState(null)
+
 
   useEffect(() => {
     numberService
@@ -36,11 +40,24 @@ const App = () => {
           .then(updatedPerson => {
             console.log(updatedPerson);
             setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
+            setErrorMessage(`Changed ${updatedPerson.name}'s number`)
+            setSuccess(true)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
+          .catch(error => {
+            setErrorMessage(
+              `Information of ${changedPerson.name} was already deleted`)
+              setSuccess(false)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           })
       } else {
-        return
+        return null
       }
-      
+
     } else {
       const person = {
         name: newName,
@@ -52,6 +69,11 @@ const App = () => {
         .then(returnedPerson => {
           console.log(returnedPerson);
           setPersons(persons.concat(returnedPerson))
+          setErrorMessage(`Added ${returnedPerson.name}'s number`)
+          setSuccess(true)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
 
@@ -70,9 +92,19 @@ const App = () => {
         .then(deletedPerson => {
           console.log(deletedPerson);
           setPersons(persons.filter(p => p.id !== id))
-        })
+          setErrorMessage(`Deleted ${deletedPerson.name}'s number`)
+          setSuccess(true)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    })
         .catch(error => {
-          alert(`${person.name} was already deleted from server`)
+          setErrorMessage(
+            `${person.name} was already deleted from server`)
+            setSuccess(false)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
   }
@@ -96,6 +128,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} success={success}/>
       <Filter
         handleFilterChange={handleFilterChange}
         newFilter={newFilter}
