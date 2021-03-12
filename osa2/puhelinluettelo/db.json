@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "5152",
+      "number": "55555",
       "id": 1
     },
     {
@@ -12,7 +12,7 @@
     },
     {
       "name": "Dan Abramov",
-      "number": "12-43-234345",
+      "number": "1",
       "id": 3
     },
     {
@@ -21,18 +21,13 @@
       "id": 4
     },
     {
-      "name": "Dan Abramov",
-      "number": "111",
-      "id": 5
-    },
-    {
-      "name": "koo",
-      "number": "999",
+      "name": "juu",
+      "number": "555",
       "id": 6
     },
     {
       "name": "koo",
-      "number": "999",
+      "number": "13",
       "id": 7
     }
   ]

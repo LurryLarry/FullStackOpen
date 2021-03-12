@@ -35,24 +35,26 @@ const App = () => {
           .update(changedPerson.id, changedPerson)
           .then(updatedPerson => {
             console.log(updatedPerson);
-            setPersons(persons.map(p => p.name !== newName ? p : updatedPerson))
+            setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
           })
       } else {
         return
       }
+      
+    } else {
+      const person = {
+        name: newName,
+        number: newNumber
+      }
+  
+      numberService
+        .create(person)
+        .then(returnedPerson => {
+          console.log(returnedPerson);
+          setPersons(persons.concat(returnedPerson))
+        })
     }
 
-    const person = {
-      name: newName,
-      number: newNumber
-    }
-
-    numberService
-      .create(person)
-      .then(returnedPerson => {
-        console.log(returnedPerson);
-        setPersons(persons.concat(returnedPerson))
-      })
   }
 
   const deletePerson = (id) => {
