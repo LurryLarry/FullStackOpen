@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-
+import numberService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,13 +11,14 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    numberService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+        console.log(initialPersons);
     })
   }, [])
-  console.log(persons);
+ 
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -30,8 +30,34 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(person))
+
+      numberService
+      .create(person)
+        .then(returnedPerson => {
+          console.log(returnedPerson);
+          setPersons(persons.concat(returnedPerson))
+      })
     }
+  }
+
+  const deletePerson = (id) => {
+    const person = persons.find(p => p.id === id)
+    console.log(person);
+    console.log('käy täällä');
+
+    const result = window.confirm(`Delete ${person.name} ?`)
+
+    if (result === true) {
+      numberService
+        .removePerson(person.id)
+        .then(deletedPerson => {
+          console.log(deletedPerson);
+          setPersons(persons.filter(p => p.id !== id))
+        })
+        .catch(error => {
+          alert(`${person.name} was already deleted from server`)
+        })
+    } 
   }
 
   const handleNameChange = (event) => {
@@ -67,6 +93,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <Persons
+        deletePerson={deletePerson}
         newFilter={newFilter}
         persons={persons}/>
     </div>
