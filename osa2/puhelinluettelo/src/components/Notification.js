@@ -1,27 +1,27 @@
 import React from 'react'
-
+import Alert from 'react-bootstrap/Button'
 const Notification = ({ message, success }) => {
 
 
-  const successStyle = {
-    color: 'green',
-    background: 'lightgrey',
-    fontSize: '20px',
-    borderStyle: 'solid',
-    borderRadius: '5px',
-    padding: '10px',
-    marginBottom: '10px'
-  }
+  // const successStyle = {
+  //   color: 'green',
+  //   background: 'lightgrey',
+  //   fontSize: '20px',
+  //   borderStyle: 'solid',
+  //   borderRadius: '5px',
+  //   padding: '10px',
+  //   marginBottom: '10px'
+  // }
 
-  const errorStyle = {
-    color: 'red',
-    background: 'lightgrey',
-    fontSize: '20px',
-    borderStyle: 'solid',
-    borderRadius: '5px',
-    padding: '10px',
-    marginBottom: '10px'
-  }
+  // const errorStyle = {
+  //   color: 'red',
+  //   background: 'lightgrey',
+  //   fontSize: '20px',
+  //   borderStyle: 'solid',
+  //   borderRadius: '5px',
+  //   padding: '10px',
+  //   marginBottom: '10px'
+  // }
   
   
   if (message === null) {
@@ -30,15 +30,15 @@ const Notification = ({ message, success }) => {
 
   if (success === true) {
     return (
-      <div style={successStyle}>
+      <Alert variant="success">
         {message}
-      </div>
+      </Alert>
     )
   } else {
     return (
-      <div style={errorStyle}>
+      <Alert variant="danger">
         {message}
-      </div>
+      </Alert>
     )
   }
   }
