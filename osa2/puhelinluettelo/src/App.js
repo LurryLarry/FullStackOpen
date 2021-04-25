@@ -4,7 +4,6 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import numberService from './services/persons'
 import Notification from './components/Notification'
-import 'bootstrap/dist/css/bootstrap.min.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -70,17 +69,8 @@ const App = () => {
         .then(returnedPerson => {
           console.log(returnedPerson);
           setPersons(persons.concat(returnedPerson))
-          console.log(persons);
           setErrorMessage(`Added ${returnedPerson.name}'s number`)
           setSuccess(true)
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 5000)
-        })
-        .catch(error => {
-          console.log(error.response.data)
-          setErrorMessage(error.response.data.error)
-          setSuccess(false)
           setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
