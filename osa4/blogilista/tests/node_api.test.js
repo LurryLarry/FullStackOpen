@@ -3,99 +3,177 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 const blog = require('../models/blog')
-const { test, expect } = require('@jest/globals')
+const User = require('../models/user')
 
-beforeEach(async () => {
-  await blog.deleteMany({})
-  let blogObject = new blog(helper.initialBlogs[0])
-  await blogObject.save()
-  blogObject = new blog(helper.initialBlogs[1])
-  await blogObject.save()
+/*describe('some blogs already on db', () => {
+  beforeEach(async () => {
+    await blog.deleteMany({})
+    let blogObject = new blog(helper.initialBlogs[0])
+    await blogObject.save()
+    blogObject = new blog(helper.initialBlogs[1])
+    await blogObject.save()
+  })
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    console.log(response)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('a specific blog is within the returned blogs', async () => {
+    const response = await api.get('/api/blogs')
+
+    const titles = response.body.map(r => r.author)
+    expect(titles).toContain(
+      'Kalle'
+    )
+  })
+
+  test('a valid blog can be added ', async () => {
+    const newBlog =  {
+      title: 'Hassu Blogi',
+      author: 'HH',
+      url: 'www.hassublog.fi',
+      likes: 99
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    console.log(blogsAtEnd)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(r => r.title)
+    expect(titles).toContain(
+      'Hassu Blogi'
+    )
+  })
+
+  test('delete by id works', async () => {
+    const currentBlogs = await helper.blogsInDb()
+    console.log(currentBlogs)
+    const blogToRemoveId = currentBlogs[currentBlogs.length - 1].id
+    console.log(blogToRemoveId)
+    await api
+      .delete(`/api/blogs/${blogToRemoveId}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    console.log(blogsAtEnd)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+    const ids = blogsAtEnd.map(blog => blog.id)
+
+    expect(ids).not.toContain(blogToRemoveId)
+  })
+
+  test('update specific blog likes', async () => {
+    const currentBlogs = await helper.blogsInDb()
+    const blogToUpdate = currentBlogs[0]
+    console.log(blogToUpdate)
+
+    blogToUpdate.likes = 1337
+
+    console.log(blogToUpdate)
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+
+    const likes = blogsAtEnd.map(blog => blog.likes)
+    expect(likes).toContain(blogToUpdate.likes)
+  })
 })
+*/
+describe('when there is initially one user at db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
 
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
+    await user.save()
+  })
 
-test('a specific blog is within the returned blogs', async () => {
-  const response = await api.get('/api/blogs')
+  test('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
 
-  const titles = response.body.map(r => r.author)
-  expect(titles).toContain(
-    'Kalle'
-  )
-})
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen',
+    }
 
-test('a valid blog can be added ', async () => {
-  const newBlog =  {
-    title: 'Hassu Blogi',
-    author: 'HH',
-    url: 'www.hassublog.fi',
-    likes: 99
-  }
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+    expect(result.body.error).toContain('username must be unique')
 
-  const blogsAtEnd = await helper.blogsInDb()
-  console.log(blogsAtEnd)
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
 
-  const titles = blogsAtEnd.map(r => r.title)
-  expect(titles).toContain(
-    'Hassu Blogi'
-  )
-})
+  test('creation fails with proper statuscode and message if username or password < 3', async () => {
+    const usersAtStart = await helper.usersInDb()
 
-test('delete by id works', async () => {
-  const currentBlogs = await helper.blogsInDb()
-  console.log(currentBlogs)
-  const blogToRemoveId = currentBlogs[currentBlogs.length - 1].id
-  console.log(blogToRemoveId)
-  await api
-    .delete(`/api/blogs/${blogToRemoveId}`)
-    .expect(204)
+    const newUser = {
+      username: 'ro',
+      name: 'Superuser',
+      password: 'salainen',
+    }
 
-  const blogsAtEnd = await helper.blogsInDb()
-  console.log(blogsAtEnd)
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
 
-  const ids = blogsAtEnd.map(blog => blog.id)
+    expect(result.body.error).toContain('must be over')
 
-  expect(ids).not.toContain(blogToRemoveId)
-})
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
 
-test('update specific blog likes', async () => {
-  const currentBlogs = await helper.blogsInDb()
-  const blogToUpdate = currentBlogs[0]
-  console.log(blogToUpdate)
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
 
-  blogToUpdate.likes = 1337
+    const newUser = {
+      username: 'lurry',
+      name: 'Lari Vesterinen',
+      password: 'Kekerosperg',
+    }
 
-  console.log(blogToUpdate)
-  await api
-    .put(`/api/blogs/${blogToUpdate.id}`)
-    .send(blogToUpdate)
-    .expect(200)
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
-  expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
-
-  const likes = blogsAtEnd.map(blog => blog.likes)
-  expect(likes).toContain(blogToUpdate.likes)
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
 })
 
 afterAll(() => {
