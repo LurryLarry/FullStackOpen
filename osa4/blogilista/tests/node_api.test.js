@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 const blog = require('../models/blog')
 const User = require('../models/user')
 
-/*describe('some blogs already on db', () => {
+describe('some blogs already on db', () => {
   beforeEach(async () => {
     await blog.deleteMany({})
     let blogObject = new blog(helper.initialBlogs[0])
@@ -24,7 +24,6 @@ const User = require('../models/user')
 
   test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
-    console.log(response)
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
@@ -32,7 +31,7 @@ const User = require('../models/user')
     const response = await api.get('/api/blogs')
 
     const titles = response.body.map(r => r.author)
-    expect(titles).toContain(
+    expect(titles).toContainEqual(
       'Kalle'
     )
   })
@@ -52,7 +51,6 @@ const User = require('../models/user')
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
-    console.log(blogsAtEnd)
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
     const titles = blogsAtEnd.map(r => r.title)
@@ -79,28 +77,43 @@ const User = require('../models/user')
     expect(ids).not.toContain(blogToRemoveId)
   })
 
-  test('update specific blog likes', async () => {
-    const currentBlogs = await helper.blogsInDb()
-    const blogToUpdate = currentBlogs[0]
-    console.log(blogToUpdate)
+  test('no likes shows as 0', async () => {
+    const newBlog =  {
+      title: 'Ei kiva',
+      author: 'Huono kirjoittaja',
+      url: 'www.eikiva.fi'
+    }
 
-    blogToUpdate.likes = 1337
-
-    console.log(blogToUpdate)
     await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send(blogToUpdate)
+      .post('/api/blogs')
+      .send(newBlog)
       .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd[blogsAtEnd.length-1].likes).toEqual(0)
+  })
 
-    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+  test('blog has id field (not _id)', async () => {
+    const response = await helper.blogsInDb()
+    console.log(response[0].id)
+    expect(response[0].id).toBeDefined()
+  })
 
-    const likes = blogsAtEnd.map(blog => blog.likes)
-    expect(likes).toContain(blogToUpdate.likes)
+  test('blog has no title or url returns correct error', async () => {
+    const newBlog =  {
+      author: 'Huono kirjoittaja',
+      likes: 5
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
   })
 })
-*/
+
 describe('when there is initially one user at db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
