@@ -1,9 +1,11 @@
-POST http://localhost:3003/api/blogs HTTP/1.1
-
+POST http://localhost:3003/api/blogs/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVra28iLCJpZCI6IjYwYTE3NDExM2VhZjFkNTU0MGUyNTMyYiIsImlhdCI6MTYyMTMyOTgwMSwiZXhwIjoxNjIxMzMzNDAxfQ.Bql7ulSvoKSf8BIfPWtgB47Y4C03QadEqkoQld_xqlw
+
 {
-  "title": "Lomamatka blogi",
-  "author": "Petteri Sukunimi",
-  "url": "www.testiurlif.i",
-  "likes": 6
+  "title": "pelle blog2",
+  "author": "pelle svensson",
+  "url": "www.jeejee.fi",
+  "likes": 99,
+  "userId": "60a174113eaf1d5540e2532b"
 }

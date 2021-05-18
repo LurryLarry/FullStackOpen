@@ -9,6 +9,7 @@ module.exports = {
   'parserOptions': {
     'ecmaVersion': 12
   },
+  'parser': 'babel-eslint',
   'rules': {
     'indent': [
       'error',
