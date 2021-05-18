@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt')
 const blog = require('../models/blog')
 const User = require('../models/user')
 
+
 describe('some blogs already on db', () => {
   beforeEach(async () => {
     await blog.deleteMany({})
@@ -36,8 +37,10 @@ describe('some blogs already on db', () => {
     )
   })
 
-  test('a valid blog can be added ', async () => {
-    const newBlog =  {
+  test('a valid blog can be added', async () => {
+    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const token = login.body.token
+    const newBlog = {
       title: 'Hassu Blogi',
       author: 'HH',
       url: 'www.hassublog.fi',
@@ -46,6 +49,7 @@ describe('some blogs already on db', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + token)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -59,25 +63,9 @@ describe('some blogs already on db', () => {
     )
   })
 
-  test('delete by id works', async () => {
-    const currentBlogs = await helper.blogsInDb()
-    console.log(currentBlogs)
-    const blogToRemoveId = currentBlogs[currentBlogs.length - 1].id
-    console.log(blogToRemoveId)
-    await api
-      .delete(`/api/blogs/${blogToRemoveId}`)
-      .expect(204)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    console.log(blogsAtEnd)
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
-
-    const ids = blogsAtEnd.map(blog => blog.id)
-
-    expect(ids).not.toContain(blogToRemoveId)
-  })
-
   test('no likes shows as 0', async () => {
+    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const token = login.body.token
     const newBlog =  {
       title: 'Ei kiva',
       author: 'Huono kirjoittaja',
@@ -86,6 +74,7 @@ describe('some blogs already on db', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + token)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -101,6 +90,8 @@ describe('some blogs already on db', () => {
   })
 
   test('blog has no title or url returns correct error', async () => {
+    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const token = login.body.token
     const newBlog =  {
       author: 'Huono kirjoittaja',
       likes: 5
@@ -108,6 +99,7 @@ describe('some blogs already on db', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + token)
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -122,6 +114,8 @@ describe('when there is initially one user at db', () => {
     const user = new User({ username: 'root', passwordHash })
 
     await user.save()
+    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const token = login.body.token
   })
 
   test('creation fails with proper statuscode and message if username already taken', async () => {

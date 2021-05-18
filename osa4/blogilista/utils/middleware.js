@@ -52,21 +52,10 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
-// const userExtractor = (async (request, response, next) => {
-//   const token = request.token
-//   const decodedToken = jwt.verify(token, process.env.SECRET)
-
-//   if (!token || !decodedToken.id) {
-//     return response.status(401).json({ error: 'token missing or invalid' })
-//   } // middleware huolehtii errorista
-//   request.user = await User.findById(decodedToken.id)
-//   next()
-// })
 
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
-  // userExtractor
 }
