@@ -57,7 +57,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
     return response.json(deletedBlog.toJSON())
   } else {
-    return response.status(400).json(
+    return response.status(401).json(
       { error: 'user doesnt hold access to the blog being deleted' })
   }
 
