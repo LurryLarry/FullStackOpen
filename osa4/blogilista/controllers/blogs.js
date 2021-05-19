@@ -11,8 +11,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   const token = request.token
-  console.log(token)
+  console.log('test', token)
   const decodedToken = jwt.verify(token, process.env.SECRET)
+
+  console.log(decodedToken.id)
 
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
@@ -23,7 +25,7 @@ blogsRouter.post('/', async (request, response) => {
       error: 'no title or url found'
     })
   }
-
+  console.log('jaa')
   const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
@@ -37,6 +39,8 @@ blogsRouter.post('/', async (request, response) => {
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+
+  console.log(savedBlog)
 
   response.json(savedBlog.toJSON())
 })
