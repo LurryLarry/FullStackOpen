@@ -14,10 +14,10 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
     backgroundColor: '#FF7F50'
   }
 
-  const toggleVisibility = (event) => {
+  const toggleVisibility = () => {
     setVisibility(!visibility)
   }
-  
+
   const removeButton = () => {
     if (user.username === blog.user.username) {
       return <button style={removeStyle} onClick={() => removeBlog(blog)}>Remove</button>

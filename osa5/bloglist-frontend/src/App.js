@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -37,13 +37,13 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-      
+
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
       setUser(user)
-      setMessage(`Logged in succesfully`)
+      setMessage('Logged in succesfully')
       setSuccess(true)
       setTimeout(() => {
         setMessage(null)
@@ -57,9 +57,9 @@ const App = () => {
         setMessage(null)
       }, 5000)
     }
-    console.log('logging in with', username, password);
+    console.log('logging in with', username, password)
   }
-  
+
   const addBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
@@ -79,12 +79,12 @@ const App = () => {
       }, 5000)
     }
   }
- 
+
   const addLike = async (blog) => {
     const blogCopy = {
       likes: blog.likes + 1,
-     }
-    
+    }
+
     console.log(blogCopy)
     try {
       const returnedBlog = await blogService.update(blog.id, blogCopy)
@@ -96,8 +96,8 @@ const App = () => {
       }, 5000)
       setSuccess(true)
     } catch (error) {
-      console.log(error.response.data) 
-      console.log(error.response.status)  
+      console.log(error.response.data)
+      console.log(error.response.status)
       console.log(error.response.headers)
       setMessage(`${error} Could not add like`)
       setTimeout(() => {
@@ -106,24 +106,24 @@ const App = () => {
       setSuccess(false)
     }
   }
-  
+
   const removeBlog = async (blog) => {
     const result = window.confirm(`Remove ${blog.title}?`)
     if (result === true) {
-    try {
-      const removedBlog = await blogService.removeBlog(blog.id)
-      setBlogs(blogs.filter(b => b.id !== removedBlog.id))
-      setMessage(`Removed ${blog.title}`)
-      setSuccess(true)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    } catch (error) {
-      setMessage(error)
-      setSuccess(false)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      try {
+        const removedBlog = await blogService.removeBlog(blog.id)
+        setBlogs(blogs.filter(b => b.id !== removedBlog.id))
+        setMessage(`Removed ${blog.title}`)
+        setSuccess(true)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      } catch (error) {
+        setMessage(error)
+        setSuccess(false)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       }
     }
   }
@@ -132,15 +132,15 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogAppUser')
   }
-  
+
 
   const blogForm = () => {
     return (
-    <Togglable buttonLabel="New blog" ref={blogFormRef}>
-      <BlogForm
-        createBlog={addBlog}
-      />
-    </Togglable>
+      <Togglable buttonLabel="New blog" ref={blogFormRef}>
+        <BlogForm
+          createBlog={addBlog}
+        />
+      </Togglable>
     )
   }
 
@@ -154,7 +154,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             Username
-             <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -163,7 +163,7 @@ const App = () => {
           </div>
           <div>
             Password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
@@ -185,7 +185,7 @@ const App = () => {
       {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} user={user} removeBlog={removeBlog}/>
-        )}
+      )}
     </div>
   )
 }

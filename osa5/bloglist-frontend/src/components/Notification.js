@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Notification = ({ message, success}) => {
+const Notification = ({ message, success }) => {
 
   const successStyle = {
     color: 'green',
@@ -38,6 +38,6 @@ const Notification = ({ message, success}) => {
         {message}
       </div>
     )}
-  }
+}
 
 export default Notification
