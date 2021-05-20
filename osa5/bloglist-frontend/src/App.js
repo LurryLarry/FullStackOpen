@@ -65,7 +65,7 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject)
       console.log(returnedBlog)
       setBlogs(blogs.concat(returnedBlog))
-      setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      setMessage(`A new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setSuccess(true)
       blogFormRef.current.toggleVisibility()
       setTimeout(() => {
@@ -79,6 +79,55 @@ const App = () => {
       }, 5000)
     }
   }
+ 
+  const addLike = async (blog) => {
+    const blogCopy = {
+      likes: blog.likes + 1,
+     }
+    
+    console.log(blogCopy)
+    try {
+      const returnedBlog = await blogService.update(blog.id, blogCopy)
+      console.log(returnedBlog)
+      setBlogs(blogs.map(b => b.id !== returnedBlog.id ? b : returnedBlog))
+      setMessage(`You liked ${returnedBlog.title} by ${returnedBlog.author}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      setSuccess(true)
+    } catch (error) {
+      console.log(error.response.data) 
+      console.log(error.response.status)  
+      console.log(error.response.headers)
+      setMessage(`${error} Could not add like`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      setSuccess(false)
+    }
+  }
+  
+  const removeBlog = async (blog) => {
+    const result = window.confirm(`Remove ${blog.title}?`)
+    if (result === true) {
+    try {
+      const removedBlog = await blogService.removeBlog(blog.id)
+      setBlogs(blogs.filter(b => b.id !== removedBlog.id))
+      setMessage(`Removed ${blog.title}`)
+      setSuccess(true)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    } catch (error) {
+      setMessage(error)
+      setSuccess(false)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      }
+    }
+  }
+
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogAppUser')
@@ -89,11 +138,14 @@ const App = () => {
     return (
     <Togglable buttonLabel="New blog" ref={blogFormRef}>
       <BlogForm
-      createBlog={addBlog}
+        createBlog={addBlog}
       />
     </Togglable>
     )
   }
+
+  blogs.sort((a, b) => (a.likes < b.likes) ? 1 : -1) // sort blogs by likes
+
   if (user === null) {
     return (
       <div>
@@ -132,7 +184,7 @@ const App = () => {
       <h2>Create new</h2>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} user={user} removeBlog={removeBlog}/>
         )}
     </div>
   )

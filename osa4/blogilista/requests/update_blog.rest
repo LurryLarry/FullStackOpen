@@ -1,0 +1,15 @@
+PUT http://localhost:3003/api/blogs/60a4e6acbf5cb513349f91ed
+Content-Type: application/json
+
+{
+  "likes":1,
+  "title": "Melkonen matkailutarina",
+  "author": "Mimmi Mammanen",
+  "url": "www.matka.fi",
+  "user": {
+    "username": "ukko",
+    "name": "Joku Ukko",
+    "id": "60a174113eaf1d5540e2532b"
+  },
+  "id": "60a4e6acbf5cb513349f91ed"
+}
