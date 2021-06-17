@@ -20,23 +20,27 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
 
   const removeButton = () => {
     if (user.username === blog.user.username) {
-      return <button style={removeStyle} onClick={() => removeBlog(blog)}>Remove</button>
+      return (
+        <div>
+          <button style={removeStyle} onClick={() => removeBlog(blog)}>Remove</button>You own this entry
+        </div>
+      )
     }
   }
 
   if (visibility === false) {
     return (
-      <div onClick={toggleVisibility} style={blogStyle}>
+      <div onClick={toggleVisibility} style={blogStyle} className="onlyTitle">
         {blog.title} <button onClick={toggleVisibility}>View</button>
       </div>
     )
   } else {
     return (
       <div style={blogStyle}>
-        <div onClick={toggleVisibility} >{blog.title}<button onClick={toggleVisibility}>Hide</button></div>
+        <div onClick={toggleVisibility} >{blog.title} {blog.author}<button onClick={toggleVisibility}>Hide</button></div>
         <div>{blog.url}</div>
         <div>{blog.likes}<button onClick={() => addLike(blog)}>Like</button></div>
-        <div>{blog.author}</div>
+        <div>{blog.user.name}</div>
         {removeButton()}
       </div>
     )
