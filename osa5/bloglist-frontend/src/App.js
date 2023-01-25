@@ -125,17 +125,6 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
   }
 
-
-  const blogForm = () => {
-    return (
-      <Togglable buttonLabel="New blog" ref={blogFormRef}>
-        <BlogForm
-          createBlog={addBlog}
-        />
-      </Togglable>
-    )
-  }
-
   blogs.sort((a, b) => (a.likes < b.likes) ? 1 : -1) // sort blogs by likes
 
   if (user === null) {
@@ -174,7 +163,11 @@ const App = () => {
       <Notification message={message} success={success}/>
       <p>{user.name} logged in<button onClick={handleLogout}>Logout</button></p>
       <h2>Create new</h2>
-      {blogForm()}
+      <Togglable buttonLabel="New blog" ref={blogFormRef}>
+        <BlogForm
+          createBlog={addBlog}
+        />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} user={user} removeBlog={removeBlog}/>
       )}
