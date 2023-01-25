@@ -38,7 +38,7 @@ describe('some blogs already on db', () => {
   })
 
   test('a valid blog can be added', async () => {
-    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const login = await api.post('/api/login').send({ username: 'lurry', password: 'Kekerosperg' })
     const token = login.body.token
     const newBlog = {
       title: 'Hassu Blogi',
@@ -64,7 +64,7 @@ describe('some blogs already on db', () => {
   })
 
   test('no likes shows as 0', async () => {
-    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const login = await api.post('/api/login').send({ username: 'lurry', password: 'Kekerosperg' })
     const token = login.body.token
     const newBlog =  {
       title: 'Ei kiva',
@@ -90,7 +90,7 @@ describe('some blogs already on db', () => {
   })
 
   test('blog has no title or url returns correct error', async () => {
-    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
+    const login = await api.post('/api/login').send({ username: 'lurry', password: 'Kekerosperg' })
     const token = login.body.token
     const newBlog =  {
       author: 'Huono kirjoittaja',
@@ -114,8 +114,6 @@ describe('when there is initially one user at db', () => {
     const user = new User({ username: 'root', passwordHash })
 
     await user.save()
-    const login = await api.post('/api/login').send({ username: "lurry", password: "Kekerosperg" })
-    const token = login.body.token
   })
 
   test('creation fails with proper statuscode and message if username already taken', async () => {
