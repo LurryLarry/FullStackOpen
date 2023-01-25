@@ -57,13 +57,11 @@ const App = () => {
         setMessage(null)
       }, 5000)
     }
-    console.log('logging in with', username, password)
   }
 
   const addBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
-      console.log(returnedBlog)
       setBlogs(blogs.concat(returnedBlog))
       setMessage(`A new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setSuccess(true)
@@ -84,11 +82,8 @@ const App = () => {
     const blogCopy = {
       likes: blog.likes + 1,
     }
-
-    console.log(blogCopy)
     try {
       const returnedBlog = await blogService.update(blog.id, blogCopy)
-      console.log(returnedBlog)
       setBlogs(blogs.map(b => b.id !== returnedBlog.id ? b : returnedBlog))
       setMessage(`You liked ${returnedBlog.title} by ${returnedBlog.author}`)
       setTimeout(() => {
@@ -96,9 +91,6 @@ const App = () => {
       }, 5000)
       setSuccess(true)
     } catch (error) {
-      console.log(error.response.data)
-      console.log(error.response.status)
-      console.log(error.response.headers)
       setMessage(`${error} Could not add like`)
       setTimeout(() => {
         setMessage(null)
