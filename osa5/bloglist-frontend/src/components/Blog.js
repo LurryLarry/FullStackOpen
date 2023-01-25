@@ -18,16 +18,6 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
     setVisibility(!visibility)
   }
 
-  const removeButton = () => {
-    if (user.username === blog.user.username) {
-      return (
-        <div>
-          <button style={removeStyle} onClick={() => removeBlog(blog)}>Remove</button>You own this entry
-        </div>
-      )
-    }
-  }
-
   if (visibility === false) {
     return (
       <div onClick={toggleVisibility} style={blogStyle} className="onlyTitle">
@@ -37,11 +27,16 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
   } else {
     return (
       <div style={blogStyle}>
-        <div onClick={toggleVisibility} >{blog.title} {blog.author}<button onClick={toggleVisibility}>Hide</button></div>
-        <div>{blog.url}</div>
-        <div>{blog.likes}<button onClick={() => addLike(blog)}>Like</button></div>
-        <div>{blog.user.name}</div>
-        {removeButton()}
+        <div onClick={toggleVisibility} >Title: {blog.title}<button onClick={toggleVisibility}>Hide</button></div>
+        <div>Author: {blog.author}</div>
+        <div>Url: {blog.url}</div>
+        <div>Likes: {blog.likes}<button onClick={() => addLike(blog)}>Like</button></div>
+        <div>Added by: {blog.name}</div>
+        {user.name === blog.name &&
+          <div>
+            <button style={removeStyle} onClick={() => removeBlog(blog)}>Remove</button>You own this entry
+          </div>
+        }
       </div>
     )
   }
