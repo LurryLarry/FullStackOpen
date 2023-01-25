@@ -11,10 +11,8 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   const token = request.token
-  console.log('test', token)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
 
-  console.log(decodedToken.id)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
 
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
@@ -25,7 +23,7 @@ blogsRouter.post('/', async (request, response) => {
       error: 'no title or url found'
     })
   }
-  console.log('jaa')
+
   const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
@@ -33,27 +31,23 @@ blogsRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user._id,
+    name: user.name,
+    userName: user.username
   })
 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  console.log(savedBlog)
-
   response.json(savedBlog.toJSON())
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
   const token = request.token
-  console.log(token)
   const decodedToken = jwt.verify(token, process.env.SECRET)
-  console.log(decodedToken)
   const user = await User.findById(decodedToken.id)
-  console.log('täällä', user._id)
   const blog = await Blog.findById(request.params.id)
-  console.log('täälläkin', blog)
 
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
@@ -69,7 +63,6 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   const blog = request.body
-
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
   response.json(updatedBlog)
 })
