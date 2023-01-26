@@ -18,14 +18,12 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
     setVisibility(!visibility)
   }
 
-  if (visibility === false) {
-    return (
+  return (
+    visibility === false ? (
       <div onClick={toggleVisibility} style={blogStyle} className="onlyTitle">
         {blog.title} <button onClick={toggleVisibility}>View</button>
       </div>
-    )
-  } else {
-    return (
+    ) : (
       <div style={blogStyle}>
         <div onClick={toggleVisibility} >Title: {blog.title}<button onClick={toggleVisibility}>Hide</button></div>
         <div>Author: {blog.author}</div>
@@ -39,7 +37,7 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
         }
       </div>
     )
-  }
+  )
 }
 
 export default Blog
