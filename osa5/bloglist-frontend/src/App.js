@@ -18,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs(blogs)
     )
   }, [])
 
@@ -50,8 +50,8 @@ const App = () => {
       }, 5000)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setMessage('Wrong username or password')
+    } catch (error) {
+      setMessage(error.response.data.error)
       setSuccess(false)
       setTimeout(() => {
         setMessage(null)
@@ -69,8 +69,8 @@ const App = () => {
       setTimeout(() => {
         setMessage(null)
       }, 5000)
-    } catch (exception) {
-      setMessage('No title / url found or token expired')
+    } catch (error) {
+      setMessage(error.response.data.error)
       setSuccess(false)
       setTimeout(() => {
         setMessage(null)
@@ -91,7 +91,7 @@ const App = () => {
       }, 5000)
       setSuccess(true)
     } catch (error) {
-      setMessage(`${error} Could not add like`)
+      setMessage(error.response.data.error)
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -111,7 +111,7 @@ const App = () => {
           setMessage(null)
         }, 5000)
       } catch (error) {
-        setMessage(error)
+        setMessage(error.response.data.error)
         setSuccess(false)
         setTimeout(() => {
           setMessage(null)
@@ -127,8 +127,8 @@ const App = () => {
 
   blogs.sort((a, b) => (a.likes < b.likes) ? 1 : -1) // sort blogs by likes
 
-  if (user === null) {
-    return (
+  return (
+    user === null ? (
       <div>
         <h2>Login to application</h2>
         <Notification message={message} success={success} />
@@ -154,25 +154,24 @@ const App = () => {
           <button type="submit">Login</button>
         </form>
       </div>
+    ) : (
+      <div>
+        <h2>Blogs</h2>
+        <Notification message={message} success={success} />
+        <p>{user.name} logged in<button onClick={handleLogout}>Logout</button></p>
+        <h2>Create new</h2>
+        <Togglable buttonLabel="New blog" ref={blogFormRef}>
+          <BlogForm
+            createBlog={addBlog}
+          />
+        </Togglable>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} addLike={addLike} user={user} removeBlog={removeBlog} />
+        )}
+      </div>
     )
-  }
-
-  return (
-    <div>
-      <h2>Blogs</h2>
-      <Notification message={message} success={success}/>
-      <p>{user.name} logged in<button onClick={handleLogout}>Logout</button></p>
-      <h2>Create new</h2>
-      <Togglable buttonLabel="New blog" ref={blogFormRef}>
-        <BlogForm
-          createBlog={addBlog}
-        />
-      </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike} user={user} removeBlog={removeBlog}/>
-      )}
-    </div>
   )
 }
+
 
 export default App
