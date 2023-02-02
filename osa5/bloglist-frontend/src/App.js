@@ -104,7 +104,7 @@ const App = () => {
     if (result === true) {
       try {
         const removedBlog = await blogService.removeBlog(blog.id)
-        setBlogs(blogs.filter(b => b.id !== removedBlog.id))
+        setBlogs([...blogs].filter(b => b.id !== removedBlog.id))
         setMessage(`Removed ${blog.title}`)
         setSuccess(true)
         setTimeout(() => {
