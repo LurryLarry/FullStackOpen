@@ -51,7 +51,7 @@ describe('some blogs already on db', () => {
       .post('/api/blogs')
       .set('Authorization', 'bearer ' + token)
       .send(newBlog)
-      .expect(200)
+      .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -76,7 +76,7 @@ describe('some blogs already on db', () => {
       .post('/api/blogs')
       .set('Authorization', 'bearer ' + token)
       .send(newBlog)
-      .expect(200)
+      .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
